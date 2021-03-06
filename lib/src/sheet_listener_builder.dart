@@ -12,13 +12,13 @@ class SheetListenerBuilder extends StatefulWidget {
   final Widget Function(BuildContext context, SheetState state) builder;
 
   /// Can be used to conditionally invoke [builder] to improve performance.
-  final bool Function(SheetState oldState, SheetState newState) buildWhen;
+  final bool Function(SheetState oldState, SheetState newState)? buildWhen;
 
   /// Creates a widget that can be used to react to changes in the [SheetState]
   /// of a [SlidingSheet].
   const SheetListenerBuilder({
-    Key key,
-    @required this.builder,
+    Key? key,
+    required this.builder,
     this.buildWhen,
   }) : super(key: key);
 
@@ -28,7 +28,7 @@ class SheetListenerBuilder extends StatefulWidget {
 
 class _SheetListenerBuilderState extends State<SheetListenerBuilder> {
   SheetState _state = SheetState.inital();
-  ValueNotifier<SheetState> _notifier;
+  ValueNotifier<SheetState>? _notifier;
 
   @override
   void didChangeDependencies() {
@@ -38,14 +38,14 @@ class _SheetListenerBuilderState extends State<SheetListenerBuilder> {
       context,
     )..addListener(_listener);
 
-    _state = _notifier.value;
+    _state = _notifier!.value;
   }
 
   void _listener() {
-    final newState = _notifier.value;
+    final newState = _notifier!.value;
     final shouldRebuild = _state == null ||
         widget.buildWhen == null ||
-        widget.buildWhen(_state, newState);
+        widget.buildWhen!(_state, newState);
 
     if (shouldRebuild) {
       _state = newState;
@@ -58,7 +58,7 @@ class _SheetListenerBuilderState extends State<SheetListenerBuilder> {
 
   @override
   void dispose() {
-    _notifier.removeListener(_listener);
+    _notifier!.removeListener(_listener);
     super.dispose();
   }
 }
